@@ -33,3 +33,10 @@ class Planet(db.Model):
     terrain: Mapped[str] = mapped_column(String(120), nullable=False)
     population: Mapped[int] = mapped_column(Integer(), nullable=True)
     climate: Mapped[str] = mapped_column(String(120), nullable=True)
+
+class Character(db.Model):
+    id: Mapped[str] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    gender: Mapped[str] = mapped_column(String(120), nullable=True)
+    hair_color: Mapped[str] = mapped_column(String(120), nullable=True)
+    eye_color: Mapped[str] = mapped_column(String(120), nullable=True)
