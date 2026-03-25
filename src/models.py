@@ -17,8 +17,8 @@ class User(db.Model):
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
 
     # Relationship One - Many
-    favorite_planets: Mapped[list["FavoritePlanets"]] = relationship(
-        "FavoritePlanets",
+    favorite_planets: Mapped[list["FavoritePlanet"]] = relationship(
+        "FavoritePlanet",
         back_populates="user"
     )
 
@@ -28,7 +28,8 @@ class User(db.Model):
             "email": self.email,
             "username": self.username,
             "first_name": self.first_name,
-            "last_name": self.last_name
+            "last_name": self.last_name,
+            "favorite_planets": [fav_planet.serialize() for fav_planet in self.favorite_planets]
             # do not serialize the password, its a security breach
         }
 
@@ -41,15 +42,19 @@ class Planet(db.Model):
     climate: Mapped[str] = mapped_column(String(120), nullable=True)
 
     # Relationship One - Many
-    favorites: Mapped[list["FavoritePlanets"]] = relationship(
-        "FavoritePlanets",
+    favorites: Mapped[list["FavoritePlanet"]] = relationship(
+        "FavoritePlanet",
         back_populates="planet"
     )
 
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
+            "terrain": self.terrain,
+            "population": self.population,
+            "climate": self.climate,
+            "favorites": [fav_planet.serialize() for fav_planet in self.favorites ]
         }
 
 
@@ -63,11 +68,14 @@ class Character(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
+            "gender": self.gender,
+            "hair_color": self.hair_color,
+            "eye_color": self.eye_color
         }
 
 
-class FavoritePlanets(db.Model):
+class FavoritePlanet(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     # ForeignKeys
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
@@ -86,4 +94,6 @@ class FavoritePlanets(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "user": self.user,
+            "planet": self.planet
         }
