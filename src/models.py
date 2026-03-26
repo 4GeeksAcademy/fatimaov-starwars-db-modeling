@@ -21,6 +21,10 @@ class User(db.Model):
         "FavoritePlanet",
         back_populates="user"
     )
+    favorite_characters: Mapped[list["FavoriteCharacter"]] = relationship(
+        "FavoriteCharacter",
+        back_populates="user"
+    )
 
     def serialize(self):
         return {
@@ -29,7 +33,8 @@ class User(db.Model):
             "username": self.username,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "favorite_planets": [fav_planet.serialize() for fav_planet in self.favorite_planets]
+            "favorite_planets": [fav_planet.serialize() for fav_planet in self.favorite_planets],
+            "favorite_characters": [fav_character.serialize() for fav_character in self.favorite_characters]
             # do not serialize the password, its a security breach
         }
 
@@ -65,6 +70,12 @@ class Character(db.Model):
     hair_color: Mapped[str] = mapped_column(String(120), nullable=True)
     eye_color: Mapped[str] = mapped_column(String(120), nullable=True)
 
+    # Relationship One - Many
+    favorites: Mapped[list["FavoritePlanet"]] = relationship(
+        "FavoriteCharacter",
+        back_populates="character"
+    )
+
     def serialize(self):
         return {
             "id": self.id,
@@ -96,4 +107,27 @@ class FavoritePlanet(db.Model):
             "id": self.id,
             "user": self.user,
             "planet": self.planet
+        }
+    
+class FavoriteCharacter(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # ForeignKeys
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    character_id: Mapped[int] = mapped_column(ForeignKey("character.id"))
+
+    # Relationship Many - One
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="favorite_characterss"
+    )
+    character: Mapped["Character"] = relationship(
+        "Character",
+        back_populates="favorites"
+    )
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user": self.user,
+            "character": self.character
         }
