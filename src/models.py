@@ -71,7 +71,7 @@ class Character(db.Model):
     eye_color: Mapped[str] = mapped_column(String(120), nullable=True)
 
     # Relationship One - Many
-    favorites: Mapped[list["FavoritePlanet"]] = relationship(
+    favorites: Mapped[list["FavoriteCharacter"]] = relationship(
         "FavoriteCharacter",
         back_populates="character"
     )
@@ -105,7 +105,7 @@ class FavoritePlanet(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "user": self.user,
+            "user_id": self.user_id,
             "planet": self.planet
         }
     
@@ -128,6 +128,6 @@ class FavoriteCharacter(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "user": self.user,
+            "user_id": self.user_id,
             "character": self.character
         }
