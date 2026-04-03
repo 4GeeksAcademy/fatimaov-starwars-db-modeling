@@ -58,8 +58,7 @@ class Planet(db.Model):
             "name": self.name,
             "terrain": self.terrain,
             "population": self.population,
-            "climate": self.climate,
-            "favorites": [fav_planet.serialize() for fav_planet in self.favorites ]
+            "climate": self.climate
         }
 
 
@@ -106,7 +105,7 @@ class FavoritePlanet(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "planet": self.planet
+            "planet": self.planet.name
         }
     
 class FavoriteCharacter(db.Model):
@@ -118,7 +117,7 @@ class FavoriteCharacter(db.Model):
     # Relationship Many - One
     user: Mapped["User"] = relationship(
         "User",
-        back_populates="favorite_characterss"
+        back_populates="favorite_characters"
     )
     character: Mapped["Character"] = relationship(
         "Character",
@@ -129,5 +128,5 @@ class FavoriteCharacter(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "character": self.character
+            "character": self.character.name
         }
